@@ -12,7 +12,6 @@ imgui_sources = [
 
 libimgui_core = static_library('imgui_core',
   files(imgui_sources),
-  cpp_args : ['-w'],
   install: true,
 )
 
@@ -33,7 +32,6 @@ if gl_dep.found() and glfw3_dep.found()
   glfw3_includes = include_directories('examples/libs/gl3w')
   libglfw3 = static_library('imgui_glfw',
     files(glfw3_sources),
-    cpp_args : ['-w'],
     dependencies : [gl_dep, glfw3_dep],
     include_directories : glfw3_includes,
     install : true,
@@ -52,7 +50,6 @@ if gl_dep.found() and glfw3_dep.found()
 
   libimgui_glfw_backend = static_library('imgui_glfw_backend',
     files(imgui_glfw_backend_sources),
-    cpp_args : ['-w'],
     dependencies : [libglfw3_dep, gl_dep, glfw3_dep],
     include_directories : glfw3_includes,
     install : true,
