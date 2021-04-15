@@ -1,3 +1,8 @@
+host_system = host_machine.system()
+cc = meson.get_compiler('c')
+
+gl_dep = dependency('gl', required : true)
+
 # ImGui Core
 imgui_sources = [
   'imgui.cpp',
@@ -21,25 +26,43 @@ libimgui_core_dep = declare_dependency(
 )
 
 # GLFW3 lib
-gl_dep = dependency('GL')
-glfw3_dep = dependency('glfw3', static : true)
+if host_system == 'windows'
+  glfw3_dep = cc.find_library('glfw3',
+    required : true,
+    dirs : meson.current_source_dir() + '/examples/libs/glfw/lib-vc2017',
+  )
+else
+  glfw3_dep = dependency('glfw3', static : true)
+endif
 
 if gl_dep.found() and glfw3_dep.found()
-  glfw3_sources = [
+  common_deps = []
+  glfw_includes = []
+  if host_system == 'windows'
+    common_deps = [
+      cc.find_library('gdi32'),
+      cc.find_library('shell32'),
+      cc.find_library('imm32'),
+    ]
+
+    glfw_includes += [ include_directories('examples/libs/glfw/include') ]
+  endif
+
+  gl3w_sources = [
     'examples/libs/gl3w/GL/gl3w.c',
   ]
 
-  glfw3_includes = include_directories('examples/libs/gl3w')
+  gl3w_includes = [ include_directories('examples/libs/gl3w') ]
   libglfw3 = static_library('imgui_glfw',
-    files(glfw3_sources),
-    dependencies : [gl_dep, glfw3_dep],
-    include_directories : glfw3_includes,
+    files(gl3w_sources),
+    dependencies : [gl_dep, glfw3_dep] + common_deps,
+    include_directories : gl3w_includes,
     install : true,
   )
 
   libglfw3_dep = declare_dependency(
     link_with : libglfw3,
-    include_directories : glfw3_includes,
+    include_directories : gl3w_includes,
   )
 
   # ImGui GLFW Backend
@@ -51,7 +74,7 @@ if gl_dep.found() and glfw3_dep.found()
   libimgui_glfw_backend = static_library('imgui_glfw_backend',
     files(imgui_glfw_backend_sources),
     dependencies : [libglfw3_dep, gl_dep, glfw3_dep],
-    include_directories : glfw3_includes,
+    include_directories : gl3w_includes + glfw_includes,
     install : true,
   )
 
