@@ -1,7 +1,7 @@
 host_system = host_machine.system()
 cc = meson.get_compiler('c')
 
-gl_dep = dependency('gl', required : true)
+gl_dep = dependency('gl', required : false)
 
 # ImGui Core
 imgui_sources = [
