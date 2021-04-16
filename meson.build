@@ -80,6 +80,6 @@ if gl_dep.found() and glfw3_dep.found()
 
   libimgui_glfw_backend_dep = declare_dependency(
     link_with : libimgui_glfw_backend,
-    include_directories : include_directories('backends'),
+    include_directories : [ include_directories('backends') ] + glfw_includes,
   )
 endif
