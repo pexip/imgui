@@ -28,11 +28,11 @@ libimgui_core_dep = declare_dependency(
 # GLFW3 lib
 if host_system == 'windows'
   glfw3_dep = cc.find_library('glfw3',
-    required : true,
     dirs : meson.current_source_dir() + '/examples/libs/glfw/lib-vc2017',
+    required : false,
   )
 else
-  glfw3_dep = dependency('glfw3', static : true)
+  glfw3_dep = dependency('glfw3', static : true, required : false)
 endif
 
 if gl_dep.found() and glfw3_dep.found()
